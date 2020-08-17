@@ -18,8 +18,8 @@ app.use(cookieParser());
 //Express Session
 app.use(session({
   secret: 'secret',
-  saveUninitialized: true,
-  resave: true
+  saveUninitialized: false,
+  resave: false
 }));
 
 //Passport init
@@ -51,12 +51,13 @@ app.post('/register', function(req, res){
 	    	res.status(200).send(newUser).end()
 	    });
     });
-    
-
 });
 
 var LocalStrategy = require('passport-local').Strategy;
-passport.use(new LocalStrategy(
+passport.use(new LocalStrategy({
+	usernameField : 'phone',
+	passwordField : 'password'
+ 	},
   function(phone, password, done) {
     User.getUserByPhone(phone, function(err, user){
       if(err) throw err;
@@ -66,6 +67,7 @@ passport.use(new LocalStrategy(
       User.comparePassword(password, user.password, function(err, isMatch){
         if(err) throw err;
      	if(isMatch){
+     		console.log('MONIL');
      	  return done(null, user);
      	} else {
      	  return done(null, false, {message: 'Invalid password'});
@@ -86,8 +88,7 @@ passport.deserializeUser(function(phone, done) {
 });
 
 // Endpoint to login
-app.post('/login',
-  passport.authenticate('local'),
+app.post('/login', passport.authenticate('local'),
   function(req, res) {
     res.send(req.user);
   }
@@ -96,7 +97,7 @@ app.post('/login',
 // Endpoint to get current user
 app.get('/user', function(req, res){
 	console.log(req.user);
-  res.send(req.user).end();
+  	res.send(req.user).end();
 })
 
 
