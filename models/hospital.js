@@ -1,6 +1,6 @@
 var mongoose=require("mongoose");
 
-var UserSchema=new mongoose.Schema({
+var HospitalSchema=new mongoose.Schema({
     name:String,
     freeBeds:Number,
     freeVentilators:Number,
