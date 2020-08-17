@@ -8,7 +8,6 @@ var Hospital              = require("./models/hospital")
 var User                  = require('./models/user')
 var passport              = require('passport');
 mongoose.connect("mongodb+srv://Avinash:Avinash@1@cluster0.pqqse.mongodb.net/db?retryWrites=true&w=majority",{useNewUrlParser:true});
-let db = mongoose.connection;
 
 // BodyParser middleware
 app.use(bodyParser.json());
@@ -29,34 +28,26 @@ app.use(passport.session());
 
 //Register User
 app.post('/register', function(req, res){
-  var password = req.body.password;
-  var password2 = req.body.password2;
-
-  if (password == password2){
-  	console.log(req.body);
-    var newUser = new User({
-      name: req.body.name,
-      bloodgrp:  req.body.bloodgrp,
-      insurance:  req.body.insurance,
-      age:  req.body.age,
-      phone:  req.body.phone,
-      history:  req.body.history,
-	  emergencyContact:[],
-	  emergencyContactFor:[],
-      password: req.body.password
-    })
-    User.create(newUser,function(err,copy){
+    console.log(req.body);
+    var users = new User({
+        name: req.body.name,
+        bloodgrp:  req.body.bloodgrp,
+        insurance:  req.body.insurance,
+        age:  req.body.age,
+        phone:  req.body.phone,
+        history:  req.body.history,
+        emergencyContact:[],
+        emergencyContactFor:[],
+        password: req.body.password
+      })
+    User.create(users,function(err,user){
     	if(err){
+            console.log(err);
     		return res.status(500);
-    	}
-    	res.status(200).send(newUser).end()
+        }
+        console.log(user);
+    	res.status(200).send(user).end()
     });
-    
-    	res.status(200).send(newUser).end()
-   	
-  } else{
-    res.status(500).send("{errors: \"Passwords don't match\"}").end()
-  }
 });
 
 
