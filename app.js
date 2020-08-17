@@ -30,15 +30,15 @@ app.use(passport.session());
 app.post('/register', function(req, res){
     console.log(req.body);
     var users = new User({
-        name: req.body.name,
-        bloodgrp:  req.body.bloodgrp,
+        name:       req.body.name,
+        bloodgrp:   req.body.bloodgrp,
         insurance:  req.body.insurance,
-        age:  req.body.age,
-        phone:  req.body.phone,
-        history:  req.body.history,
+        age:        req.body.age,
+        phone:      req.body.phone,
+        history:    req.body.history,
         emergencyContact:[],
         emergencyContactFor:[],
-        password: req.body.password
+        password:  req.body.password
       })
     User.createUser(users, function(err, user){
       if(err) throw err;
@@ -107,6 +107,16 @@ app.get('/logout', function(req, res){
   res.send(null)
 });
 
+app.get('/',function(req,res){
+  Hospital.find({},function(err,hospitals){
+		if(err)
+		{
+			console.log(err);
+			res.send("null");
+		}
+		else res.send(hospitals);
+		});
+})
 
 app.listen(3000, function(){
     console.log("The Server Has Started!");
