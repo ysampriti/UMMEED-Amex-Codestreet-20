@@ -55,6 +55,57 @@ app.post('/register', function(req, res){
 
 });
 
+var LocalStrategy = require('passport-local').Strategy;
+passport.use(new LocalStrategy(
+  function(phone, password, done) {
+    User.getUserByPhone(phone, function(err, user){
+      if(err) throw err;
+      if(!user){
+        return done(null, false, {message: 'Unknown User'});
+      }
+      User.comparePassword(password, user.password, function(err, isMatch){
+        if(err) throw err;
+     	if(isMatch){
+     	  return done(null, user);
+     	} else {
+     	  return done(null, false, {message: 'Invalid password'});
+     	}
+     });
+   });
+  }
+));
+
+passport.serializeUser(function(user, done) {
+  done(null, user.phone);
+});
+
+passport.deserializeUser(function(phone, done) {
+  User.getUserByPhone(phone, function(err, user) {
+    done(err, user);
+  });
+});
+
+// Endpoint to login
+app.post('/login',
+  passport.authenticate('local'),
+  function(req, res) {
+    res.send(req.user);
+  }
+);
+
+// Endpoint to get current user
+app.get('/user', function(req, res){
+	console.log(req.user);
+  res.send(req.user).end();
+})
+
+
+// Endpoint to logout
+app.get('/logout', function(req, res){
+  req.logout();
+  res.send(null)
+});
+
 
 app.listen(3000, function(){
     console.log("The Server Has Started!");

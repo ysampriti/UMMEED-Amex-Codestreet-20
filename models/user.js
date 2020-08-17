@@ -30,3 +30,15 @@ module.exports.createUser = function(newUser, callback){
     });
   });
 }
+
+module.exports.getUserByPhone = function(phone, callback){
+  var query = {phone: phone};
+  User.findOne(query, callback);
+}
+
+module.exports.comparePassword = function(candidatePassword, hash, callback){
+  bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
+    if(err) throw err;
+    callback(null, isMatch);
+  });
+}
