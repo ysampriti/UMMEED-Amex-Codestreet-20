@@ -40,18 +40,22 @@ app.post('/register', function(req, res){
         emergencyContactFor:[],
         password: req.body.password
       })
-    User.create(users,function(err,user){
-    	if(err){
-            console.log(err);
-    		return res.status(500);
-        }
-        console.log(user);
-    	res.status(200).send(user).end()
+    User.createUser(users, function(err, user){
+      if(err) throw err;
+      User.create(user,function(err,newUser){
+	    	if(err){
+	            console.log(err);
+	    		return res.status(500);
+	        }
+	        console.log(newUser);
+	    	res.status(200).send(newUser).end()
+	    });
     });
+    
+
 });
 
 
 app.listen(3000, function(){
     console.log("The Server Has Started!");
  });
- 
