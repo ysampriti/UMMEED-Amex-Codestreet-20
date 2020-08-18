@@ -218,7 +218,7 @@ app.post('/:hospitalid/updateBeds',function(req,res){
     }
     hospital.freeBeds=req.body.beds;
     hospital.save();
-    res.send(hospital);
+    return res.send(hospital);
   });
 });
 
@@ -229,7 +229,7 @@ app.post('/:hospitalid/updateVents',function(req,res){
       console.log(err);
       return res.status(500);    
     }
-    hospital.freeVentilators=req.body.Ventilators;
+    hospital.freeVentilators=req.body.ventilators;
     hospital.save();
     res.send(hospital);
   });
