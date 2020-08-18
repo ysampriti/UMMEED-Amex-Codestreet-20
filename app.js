@@ -182,6 +182,16 @@ app.get('/logout', function(req, res){
   res.send(null)
 });
 
+app.get('/',function(req,res){
+  Hospital.find({},function(err,hospitals){
+		if(err)
+		{
+			console.log(err);
+			res.send("null");
+		}
+		else res.send(hospitals);
+		});
+})
 
 // Endpoint to login
 main.post('/staff/login', passport.authenticate('local'),
