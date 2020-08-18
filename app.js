@@ -71,26 +71,35 @@ app.post('/register', function(req, res){
 });
 
 main.post('/register', function(req, res){
-    console.log(req.body);
-    console.log("ASDAD");
+  console.log(req.body);
+  Hospital.find({name:req.body.hospital},function(err,allHospital){
+    if(err)
+    {
+      console.log(err);
+      return res.status(500);    
+    }
+    
+    if(allHospital.length !=1)return res.status(500);
+
     var users = new Staff({
-        name:       req.body.name,
-        hospital :  req.body.hospital,
-        age:        req.body.age,
-        phone:      req.body.phone,
-        password:  req.body.password
-      })
+    name:       req.body.name,
+    worksAt :  allHospital[0],
+    age:        req.body.age,
+    phone:      req.body.phone,
+    password:  req.body.password
+    })
     Staff.createStaff(users, function(err, user){
       if(err) throw err;
       Staff.create(user,function(err,newUser){
-	    	if(err){
-	            console.log(err);
-	    		return res.status(500);
-	        }
-	        console.log(newUser);
-	    	res.status(200).send(newUser).end()
-	    });
+        if(err){
+          console.log(err);
+          return res.status(500);
+        }
+        console.log(newUser);
+        res.status(200).send(newUser).end()
+        });
     });
+  });
 });
 
 var LocalStrategy = require('passport-local').Strategy;
@@ -200,7 +209,31 @@ main.post('/staff/login', passport.authenticate('local'),
   }
 );
 
+app.post('/:hospitalid/updateBeds',function(req,res){
+  Hospital.findById(req.params.hospitalid,function(err,hospital){
+    if(err)
+    {
+      console.log(err);
+      return res.status(500);    
+    }
+    hospital.freeBeds=req.body.beds;
+    hospital.save();
+    res.send(hospital);
+  });
+});
 
+app.post('/:hospitalid/updateVents',function(req,res){
+  Hospital.findById(req.params.hospitalid,function(err,hospital){
+    if(err)
+    {
+      console.log(err);
+      return res.status(500);    
+    }
+    hospital.freeVentilators=req.body.Ventilators;
+    hospital.save();
+    res.send(hospital);
+  });
+});
 
 // Endpoint to logout
 main.get('/staff/logout', function(req, res){
@@ -217,7 +250,7 @@ app.get('/',function(req,res){
 		}
 		else res.send(hospitals);
 		});
-})
+});
 
 app.listen(3001, function(){
     console.log("The Server Has Started!");
