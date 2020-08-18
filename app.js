@@ -43,33 +43,7 @@ main.use(session({
 main.use(passport2.initialize());
 main.use(passport2.session());
 
-//Register User
-app.post('/register', function(req, res){
-    console.log(req.body);
-    var users = new User({
-        name:       req.body.name,
-        bloodgrp:   req.body.bloodgrp,
-        insurance:  req.body.insurance,
-        age:        req.body.age,
-        phone:      req.body.phone,
-        history:    req.body.history,
-        emergencyContact:[],
-        emergencyContactFor:[],
-        password:  req.body.password
-      })
-    User.createUser(users, function(err, user){
-      if(err) throw err;
-      User.create(user,function(err,newUser){
-	    	if(err){
-	            console.log(err);
-	    		return res.status(500);
-	        }
-	        console.log(newUser);
-	    	res.status(200).send(newUser).end()
-	    });
-    });
-});
-
+//Register staff
 main.post('/register', function(req, res){
   console.log(req.body);
   Hospital.find({name:req.body.hospital},function(err,allHospital){
@@ -100,6 +74,32 @@ main.post('/register', function(req, res){
         });
     });
   });
+});
+
+app.post('/register', function(req, res){
+    console.log(req.body);
+    var users = new User({
+        name:       req.body.name,
+        bloodgrp:   req.body.bloodgrp,
+        insurance:  req.body.insurance,
+        age:        req.body.age,
+        phone:      req.body.phone,
+        history:    req.body.history,
+        emergencyContact:[],
+        emergencyContactFor:[],
+        password:  req.body.password
+      })
+    User.createUser(users, function(err, user){
+      if(err) throw err;
+      User.create(user,function(err,newUser){
+	    	if(err){
+	            console.log(err);
+	    		return res.status(500);
+	        }
+	        console.log(newUser);
+	    	res.status(200).send(newUser).end()
+	    });
+    });
 });
 
 var LocalStrategy = require('passport-local').Strategy;
