@@ -200,11 +200,6 @@ main.post('/staff/login', passport.authenticate('local'),
   }
 );
 
-// Endpoint to get current user
-main.get('/staff', function(req, res){
-	console.log(req.user);
-  	res.send(req.user).end();
-})
 
 
 // Endpoint to logout
