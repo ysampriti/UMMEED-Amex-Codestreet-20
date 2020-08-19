@@ -113,7 +113,7 @@ passport.use(new LocalStrategy({
       if(!user){
         return done(null, false, {message: 'Unknown User'});
       }
-      User.comparePassword(password, user.password, function(err, isMatch){
+      require('./models/user').comparePassword(password, user.password, function(err, isMatch){
         if(err) throw err;
      	if(isMatch){
      		console.log('MONIL');
@@ -209,10 +209,9 @@ main.post('/staff/login', passport.authenticate('local'),
   }
 );
 
-app.post('/:hospitalid/updateBeds',function(req,res){
+app.post('/updateBeds',function(req,res){
   Hospital.findById(req.params.hospitalid,function(err,hospital){
-    if(err)
-    {
+    if(err){
       console.log(err);
       return res.status(500);    
     }
@@ -222,10 +221,31 @@ app.post('/:hospitalid/updateBeds',function(req,res){
   });
 });
 
+app.put('/addEmergencyContact',function(req,res){
+	User.getUserByPhone(req.body.userPhone,function(err,user1){
+		if(err){
+			console.log(err);
+			return res.status(500);
+		}
+		req.body.newEC.forEach(phone => {
+			User.getUserByPhone(phone,function(err,user2){
+				if(err){
+					console.log(err);
+					return res.status(500);
+				}
+				user2.emergencyContactFor.push(user1);
+				user2.save();
+				user1.emergencyContact.push(user2);
+				user1.save();
+			})
+		})
+		res.send(user1);
+	});
+});
+
 app.post('/:hospitalid/updateVents',function(req,res){
   Hospital.findById(req.params.hospitalid,function(err,hospital){
-    if(err)
-    {
+    if(err){
       console.log(err);
       return res.status(500);    
     }

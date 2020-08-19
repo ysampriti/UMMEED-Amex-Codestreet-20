@@ -7,4 +7,10 @@ var HospitalSchema=new mongoose.Schema({
     phone:Number,
 });
 
-module.exports=mongoose.model("hospital",HospitalSchema);
+var Hospital = module.exports=mongoose.model("hospital",HospitalSchema);
+
+
+module.exports.findById = function(id, callback){
+  var query = {_id: id};
+  Hospital.findOne(query, callback);
+}
