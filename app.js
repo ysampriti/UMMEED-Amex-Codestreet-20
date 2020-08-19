@@ -6,7 +6,7 @@ var cookieParser          = require('cookie-parser');
 var session               = require('express-session');
 var Hospital              = require("./models/hospital")
 var User                  = require('./models/user')
-var Staff                  = require('./models/hospitalStaff')
+var Staff                 = require('./models/hospitalStaff')
 var passport              = require('passport');
 var passport2             = require('passport');
 mongoose.connect("mongodb+srv://Avinash:Avinash@1@cluster0.pqqse.mongodb.net/db?retryWrites=true&w=majority",{useNewUrlParser:true});
@@ -191,17 +191,6 @@ app.get('/logout', function(req, res){
   res.send(null)
 });
 
-app.get('/',function(req,res){
-  Hospital.find({},function(err,hospitals){
-		if(err)
-		{
-			console.log(err);
-			res.send("null");
-		}
-		else res.send(hospitals);
-		});
-})
-
 // Endpoint to login
 main.post('/staff/login', passport.authenticate('local'),
   function(req, res) {
@@ -246,11 +235,29 @@ app.get('/',function(req,res){
 		if(err)
 		{
 			console.log(err);
-			res.send("null");
+			return res.status("500");
 		}
 		else res.send(hospitals);
 		});
 });
+
+app.get("/:phone/emergencyContacts", function(req, res){
+User.findOne({phone:req.params.phone}).populate('emergencyContactFor').exec(function(err,user){
+      if(err){
+        console.log(err);
+        return res.status("500");
+      }
+      
+      else{
+        console.log(user);
+        var answer={
+         emergency:user.emergencyContactFor 
+        };
+        return res.send(answer);
+      }
+  });
+});
+
 
 app.listen(3001, function(){
     console.log("The Server Has Started!");
