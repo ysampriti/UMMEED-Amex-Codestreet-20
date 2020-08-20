@@ -6,7 +6,7 @@ var cookieParser          = require('cookie-parser');
 var session               = require('express-session');
 var Hospital              = require("./models/hospital")
 var User                  = require('./models/user')
-var Staff                  = require('./models/hospitalStaff')
+var Staff                 = require('./models/hospitalStaff')
 var passport              = require('passport');
 var passport2             = require('passport');
 mongoose.connect("mongodb+srv://Avinash:Avinash@1@cluster0.pqqse.mongodb.net/db?retryWrites=true&w=majority",{useNewUrlParser:true});
@@ -43,33 +43,7 @@ main.use(session({
 main.use(passport2.initialize());
 main.use(passport2.session());
 
-//Register User
-app.post('/register', function(req, res){
-    console.log(req.body);
-    var users = new User({
-        name:       req.body.name,
-        bloodgrp:   req.body.bloodgrp,
-        insurance:  req.body.insurance,
-        age:        req.body.age,
-        phone:      req.body.phone,
-        history:    req.body.history,
-        emergencyContact:[],
-        emergencyContactFor:[],
-        password:  req.body.password
-      })
-    User.createUser(users, function(err, user){
-      if(err) throw err;
-      User.create(user,function(err,newUser){
-	    	if(err){
-	            console.log(err);
-	    		return res.status(500);
-	        }
-	        console.log(newUser);
-	    	res.status(200).send(newUser).end()
-	    });
-    });
-});
-
+//Register staff
 main.post('/register', function(req, res){
   console.log(req.body);
   Hospital.find({name:req.body.hospital},function(err,allHospital){
@@ -100,6 +74,32 @@ main.post('/register', function(req, res){
         });
     });
   });
+});
+
+app.post('/register', function(req, res){
+    console.log(req.body);
+    var users = new User({
+        name:       req.body.name,
+        bloodgrp:   req.body.bloodgrp,
+        insurance:  req.body.insurance,
+        age:        req.body.age,
+        phone:      req.body.phone,
+        history:    req.body.history,
+        emergencyContact:[],
+        emergencyContactFor:[],
+        password:  req.body.password
+      })
+    User.createUser(users, function(err, user){
+      if(err) throw err;
+      User.create(user,function(err,newUser){
+	    	if(err){
+	            console.log(err);
+	    		return res.status(500);
+	        }
+	        console.log(newUser);
+	    	res.status(200).send(newUser).end()
+	    });
+    });
 });
 
 var LocalStrategy = require('passport-local').Strategy;
@@ -191,17 +191,6 @@ app.get('/logout', function(req, res){
   res.send(null)
 });
 
-app.get('/',function(req,res){
-  Hospital.find({},function(err,hospitals){
-		if(err)
-		{
-			console.log(err);
-			res.send("null");
-		}
-		else res.send(hospitals);
-		});
-})
-
 // Endpoint to login
 main.post('/staff/login', passport.authenticate('local'),
   function(req, res) {
@@ -217,7 +206,7 @@ app.post('/updateBeds',function(req,res){
     }
     hospital.freeBeds=req.body.beds;
     hospital.save();
-    res.send(hospital);
+    return res.send(hospital);
   });
 });
 
@@ -249,7 +238,7 @@ app.post('/:hospitalid/updateVents',function(req,res){
       console.log(err);
       return res.status(500);    
     }
-    hospital.freeVentilators=req.body.Ventilators;
+    hospital.freeVentilators=req.body.ventilators;
     hospital.save();
     res.send(hospital);
   });
@@ -266,11 +255,29 @@ app.get('/',function(req,res){
 		if(err)
 		{
 			console.log(err);
-			res.send("null");
+			return res.status("500");
 		}
 		else res.send(hospitals);
 		});
 });
+
+app.get("/:phone/emergencyContacts", function(req, res){
+User.findOne({phone:req.params.phone}).populate('emergencyContactFor').exec(function(err,user){
+      if(err){
+        console.log(err);
+        return res.status("500");
+      }
+      
+      else{
+        console.log(user);
+        var answer={
+         emergency:user.emergencyContactFor 
+        };
+        return res.send(answer);
+      }
+  });
+});
+
 
 app.listen(3001, function(){
     console.log("The Server Has Started!");
