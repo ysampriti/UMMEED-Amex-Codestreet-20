@@ -15,8 +15,8 @@ import Card from "../shared/card";
 const Hospital = ({ navigation }) => {
   const [hospitals, setHospitals] = useState([]);
   useEffect(() => {
-        async function fetchHospitals(){
-           fetch('http://localhost:3001/', {
+         async function fetchHospitals(){
+           fetch('http://192.168.137.1:3001/', {
               method: 'GET',
               headers: {
                 Accept: 'application/json',

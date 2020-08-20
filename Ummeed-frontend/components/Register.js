@@ -28,7 +28,7 @@ export default class SignUp extends React.Component {
   updateProfile = () => {
     const { age, gender, bloodgrp, history, insurance } = this.state
     var id;
-     fetch('http://localhost:3001/register', {
+     fetch('http://192.168.137.1:3001/register', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -57,7 +57,7 @@ export default class SignUp extends React.Component {
     var newEC = [];
     if(ec1.length>0) newEC.push(ec1);
     if(ec2.length>0) newEC.push(ec2);
-    fetch('http://localhost:3001/addEmergencyContact', {
+    fetch('http://192.168.137.1:3001/addEmergencyContact', {
         method: 'PUT',
         headers: {
           Accept: 'application/json',

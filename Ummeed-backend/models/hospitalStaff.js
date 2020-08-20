@@ -6,7 +6,7 @@ var StaffSchema=new mongoose.Schema({
     age:Number,
     phone:Number,
     password : String,
-    worksAt:{
+    WorksAt:{
       type:mongoose.Schema.Types.ObjectId,
       ref:'hospital'
     }

@@ -4,7 +4,9 @@ import Card from "../shared/card";
 
 const HospitalDetails = ({ route, navigation }) => {
   
-
+   callNumber = (number) => {     
+    Linking.openURL("tel:${" + number + "}");   
+  };
   const Hospital = route.params.hospital;
   console.log(Hospital.image);
   console.log(typeof Hospital.image);
@@ -16,6 +18,11 @@ const HospitalDetails = ({ route, navigation }) => {
         <Text>{Hospital.body}</Text>
         <Image source={{ uri: Hospital.image }} />
       </Card>
+      <Button         
+        onPress={() => callNumber(Hospital.phone)}        
+         title="Call hospital"       ></Button>        
+
+
       <Button
         title="Go to hospital list"
         onPress={() => navigation.navigate("Hospital")}

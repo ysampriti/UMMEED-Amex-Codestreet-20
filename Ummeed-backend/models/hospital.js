@@ -14,3 +14,7 @@ module.exports.findById = function(id, callback){
   var query = {_id: id};
   Hospital.findOne(query, callback);
 }
+module.exports.findByName= function(name, callback){
+  var query = {name : name};
+  Hospital.findOne(query, callback);
+}

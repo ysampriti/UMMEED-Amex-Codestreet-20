@@ -51,8 +51,8 @@ const Ambulance = ({ navigation }) => {
         }}
       >
         <Card>
-          <Text>Hello</Text>
           <Text>{item.name}</Text>
+          <Text>{item.number}</Text>
           <Image source={{ uri: item.image }} />
         </Card>
       </TouchableOpacity>
